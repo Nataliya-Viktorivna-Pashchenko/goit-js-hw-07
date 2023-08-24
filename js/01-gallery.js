@@ -16,30 +16,30 @@ const renderGallery = (array) => array.map((item) =>
 )
     .join("");
 
-    galleryList.insertAdjacentHTML('beforeend', renderGallery(galleryItems));
-
+galleryList.insertAdjacentHTML('beforeend', renderGallery(galleryItems));
 
 
 const hendleGallery = (event) => {
-    if (event.currentTarget === event.target) {
-        return;
-    }
-    event.preventDefault();
 
+    if (event.target.nodeName !== "IMG") { return };
+
+     event.preventDefault();
+    
     const galleryItem = event.target.dataset.sours;
-   
-    const modalGalltry = basicLightbox.create(`
-		<img src=${galleryItem}>
-	`);
-       modalGalltry.show();
 
-    const pressEsc = (event) => {
-    if (event.code === "Escape") {
-        modalGalltry.close();
+    const instance = basicLightbox.create(
+        `<img src = '${galleryItem}'>`,
+        {onShow: (instance) => {document.addEventListener("keydown", pressEsc);},
+         onClose: (instance) => {document.removeEventListener("keydown", pressEsc);},
+        }
+    );
+    instance.show();
+
+    function pressEsc(event) {
+        if (event.code === "Escape") {
+            instance.close();
+        }
     }
 };
- 
-document.addEventListener("keyup", pressEsc);
-};
-
 galleryList.addEventListener("click", hendleGallery);
+    
